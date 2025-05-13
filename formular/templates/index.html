@@ -1,0 +1,60 @@
+{% extends 'layout.html' %}
+{% block body %}
+<form action='/' method="post">
+    <div class="row mb-4">
+        <div class="col-sm-9 text-end">
+            Language/ Limba/ Sprache: 
+        </div>
+        <button class="col" type="submit" name="lang" value="eng">
+            &#x1F1FA;&#x1F1F8;
+        </button>
+        <button class="col" type="submit" name="lang" value="ro">
+            &#127479;&#127476;
+        </button>
+        <button class="col" type="submit" name="lang" value="de">
+            &#127465;&#127466;
+        </button>
+    </div>
+</form>
+
+<div class="row">
+    <div class="text-center mb-4">
+        <h1>
+            {% if lang == "eng" %}
+            The contribution of Artificial Intelligence (AI) in quantifying the severity of the musculoskeletal pathologies
+            {% elif lang == "ro" %}
+            Aportul Inteligenței Artificiale (IA) în cuantificarea severității patologiilor sistemului musculo-scheletal
+            {% else %}
+            Der Beitrag der künstlichen Intelligenz (KI) zur Quantifizierung der Schwere von Erkrankungen des Bewegungsapparats
+            {% endif %}
+        </h1>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-6 text-muted small mt-4 mb-4 mx-3 border border-primary border-5 rounded text-center p-4">
+            {% if lang == "eng" %}
+                The survey will take about 10 minutes.
+                <br><br>
+                You will be asked to grade 10 MRI images of chondromalacia patellae according to the modified Outerbridge classification with or without the help of AI. 
+            {% elif lang == "ro" %}
+                Completarea chestionarului va dura aproximativ 10 minute.
+                <br><br>
+                Vi se va cere să alegeți gradul condromalaciei patelare conform clasificării modificate Outerbridge pentru 10 imagini de RMN (cu sau fără asistență din partea IA).
+            {% else %}
+                Das Ausfüllen des Fragebogens dauert etwa 10 Minuten.
+                <br><br>
+                Sie werden den Grad der Chondromalacia patellae nach der modifizierten Outerbridge-Klassifkation in 10 MRT-Aufnahmen erkennen (mit oder ohne Hilfe von KI).
+            {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="text-center">
+        <form action="/info" method="get">
+            <button type="submit" class="btn btn-primary btn-lg m-5">Start</button>
+            <input type="hidden" name="lang" value={{ lang }}>
+        </form>
+    </div>
+</div>
+{% endblock %}

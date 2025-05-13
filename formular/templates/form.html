@@ -1,0 +1,227 @@
+{% extends 'layout.html' %}
+{% block body %}
+<div class="row">
+    <div class="col">
+        <img src="static/{{number}}.png" height="461" width="461">
+    </div>
+    <div class="col">
+        <form action="/form" method="post" id="aiform">
+            <fieldset>
+                <legend>
+                    {{ number }}.
+                    {% if lang == "eng" %}
+                        Which Outerbridge grade is present in this image?
+                    {% elif lang == "ro" %}
+                        Indicați gradul Outerbridge din imagine:
+                    {% else %}
+                        Welcher Outerbridge-Grad liegt in dieser Aufnahme vor?
+                    {% endif %}
+                </legend>
+                <div class="form-check">
+                    <input type="radio" id="I" name="q{{number}}" value="1" class="form-check-input" autofocus>
+                    <label for="I" class="form-check-label">
+                        {% if lang == "eng" %}
+                        Grade I
+                        {% else %}
+                        Grad I
+                        {% endif %}
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" id="II" name="q{{number}}" value="2" class="form-check-input">
+                    <label for="II" class="form-check-label">
+                        {% if lang == "eng" %}
+                        Grade II
+                        {% else %}
+                        Grad II
+                        {% endif %}
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" id="III" name="q{{number}}" value="3" class="form-check-input">
+                    <label for="III" class="form-check-label">
+                        {% if lang == "eng" %}
+                        Grade III
+                        {% else %}
+                        Grad III
+                        {% endif %}
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" id="IV" name="q{{number}}" value="4" class="form-check-input">
+                    <label for="IV" class="form-check-label">
+                        {% if lang == "eng" %}
+                        Grade IV
+                        {% else %}
+                        Grad IV
+                        {% endif %}
+                    </label>
+                </div>
+            </fieldset>
+            <input type="hidden" id="category" name="category" value={{category}}>
+            <input type="hidden" name="lang" value={{ lang }}>
+        </form>
+
+        {% if category == "True" %}
+            <button type="submit" name="question" value="{{number}}" form="aiform" id="nextbutton" class="btn btn-primary d-none mt-3 mb-3">Next</button>
+            <!--<h3>AI group</h3>-->
+            <button type="button" id="ai_button" onclick="aiButtonClick({{aiWait}}, {{number}}, '{{lang}}')" class="btn btn-info mt-3 mb-3">
+                {% if lang == "eng" %}
+                Get AI opinion
+                {% elif lang == "de" %}
+                KI Meinung
+                {% else %}
+                Opinie IA
+                {% endif %}
+            </button>
+            <div class="loader mt-3 mb-3" id="ailoader"></div>
+            <div id="prediction" class="text-info mt-3 mb-3"></div>
+        {% else %} 
+            <button type="submit" name="question" value="{{number}}" form="aiform" class="btn btn-primary mt-3 mb-3">Next</button>
+            <!--<h3>Normal group</h3>-->
+        {% endif %}
+
+        <button type="button" class="btn btn-success" id="showInfo">
+            {% if lang == "eng" %}
+            Modified Outerbridge grading
+            {% elif lang == "de" %}
+            Modifizierte Outerbridge-Klassifikation
+            {% else %}
+            Clasificarea Outerbridge modificată
+            {% endif %}
+        </button>
+
+        <div id="overlay">
+            <div id="popup">
+                <div class="container">
+                    <div class="row mb-2 mt-2">
+                        <h1 class="text-center">
+                            {% if lang == "eng" %}
+                                Modified Outerbridge grading of chondromalacia
+                            {% elif lang == "ro" %}
+                                Clasificarea Outerbridge modificată pentru condromalacie
+                            {% else %}
+                                Modifizierte Outerbridge-Klassifikation der Chondromalazie 
+                            {% endif %}
+                        </h1>
+                    </div>
+                    <div class="row mb-4 mt-4 border border-danger border-5 rounded text-center text-danger fw-bold p-4">
+                        {% if lang == "eng" %}
+                            You can access this information anytime during the survey. There is no need to memorize it !
+                        {% elif lang == "ro" %}
+                            Puteți accesa această informație oricând în timpul chestionarului. Nu e nevoie să o memorați !
+                        {% else %}
+                            Sie können diese Informationen jederzeit während der Umfrage abrufen. Sie müssen sich das nicht merken !
+                        {% endif %}
+                    </div>
+                    <div class="row mb-4 mt-4">
+                        <div class="col-md-4">
+                            {% if lang == "eng" %}
+                                <h6>Grade I</h6>
+                                - focal areas of hyperintensity with normal contour 
+                            {% elif lang == "ro" %}
+                                <h6>Grad I</h6>
+                                - zone focale de hiperintensitate cu contur normal
+                            {% else %}
+                                <h6>Grad I</h6>
+                                - fokale Bereiche mit Hyperintensität und normalem Kontur
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <img src="static/grade1.png" class="img-fluid">
+                        </div>
+                        <div class="col-md-4">
+                            <img src="static/examplegrade1.png" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="row mb-4 mt-4">
+                        <div class="col-md-4">
+                            {% if lang == "eng" %}
+                                <h6>Grade II</h6>
+                                - blister-like swelling/fraying of articular cartilage extending to surface 
+                            {% elif lang == "ro" %}
+                                <h6>Grad II</h6>
+                                - Edemațiere/desprindere asemănătoare unei vezicule a cartilajului articular, extinsă până la suprafață
+                            {% else %}
+                                <h6>Grad II</h6>
+                                - Blasenartige Schwellung/Ausfransung des Gelenkknorpels, die bis zur Oberfläche reicht
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <img src="static/grade2.png" class="img-fluid">
+                        </div>
+                        <div class="col-md-4">
+                            <img src="static/examplegrade2.png" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="row mb-4 mt-4">
+                        <div class="col-md-4">
+                            {% if lang == "eng" %}
+                                <h6>Grade III</h6>
+                                - partial-thickness cartilage loss with focal ulceration 
+                            {% elif lang == "ro" %}
+                                <h6>Grad III</h6>
+                                - Pierderea parțială a grosimii cartilajului cu ulcerație focală
+                            {% else %}
+                                <h6>Grad III</h6>
+                                - Teilverlust des Knorpels mit fokaler Ulzeration
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <img src="static/grade3.png" class="img-fluid">
+                        </div>
+                        <div class="col-md-4">
+                            <img src="static/examplegrade3.png" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="row mb-4 mt-4">
+                        <div class="col-md-4">
+                            {% if lang == "eng" %}
+                                <h6>Grade IV</h6>
+                                - full-thickness cartilage loss with underlying bone reactive changes
+                            {% elif lang == "ro" %}
+                                <h6>Grad IV</h6>
+                                - Pierderea completă a grosimii cartilajului cu modificări reactive ale osului subiacent
+                            {% else %}
+                                <h6>Grad IV</h6>
+                                - Vollständiger Knorpelverlust mit reaktiven Veränderungen des darunterliegenden Knochens
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <img src="static/grade4.png" class="img-fluid">
+                        </div>
+                        <div class="col-md-4">
+                            <img src="static/examplegrade4.png" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="row mb-4 mt-4">
+                        {% if lang == "eng" %}
+                            Source:
+                        {% elif lang == "ro" %}
+                            Sursă:
+                        {% else %}
+                            Die Quelle:
+                        {% endif %}
+                        <a href="https://radiopaedia.org/articles/modified-outerbridge-grading-of-chondromalacia" target="_blank">
+                            Radiopedia. Modified Outerbridge grading
+                        </a>
+                    </div>
+                </div>
+                <button type="button" id="closeButton" class="row btn btn-secondary">
+                    {% if lang == "eng" %}
+                    Close
+                    {% elif lang == "de" %}
+                    Schließen
+                    {% else %}
+                    Închide
+                    {% endif %}
+                </button>
+            </div>
+        </div>
+
+        <h1 class="text-danger">
+            {{message}}
+        </h1>
+    </div>
+<script src="static/script.js"></script>
+{% endblock %}

@@ -1,0 +1,257 @@
+{% extends 'layout.html' %}
+{% block body %}
+<h1 class="text-center mb-5">
+    {% if lang == "eng" %}
+        Please enter your personal information
+    {% elif lang == "ro" %}
+        Introduceți datele personale
+    {% else %}
+        Bitte geben Sie Ihre persönlichen Daten ein
+    {% endif %}
+</h1>
+<form action="/personal" method="post">
+    <div class="mb-3">
+        <label for="name" class="form-label">
+            {% if lang == "eng" %}
+                Name:
+            {% elif lang == "ro" %}
+                Prenume:
+            {% else %}
+                Vorname: 
+            {% endif %}
+        </label>
+        <input id="name" name="name" class="form-control" autocomplete="off">
+    </div>
+    <div class="mb-3">
+        <label for="surname" class="form-label">
+            {% if lang == "eng" %}
+                Surname:
+            {% elif lang == "ro" %}
+                Nume:
+            {% else %}
+                Nachname:
+            {% endif %}
+        </label>
+        <input id="surname" name="surname" class="form-control" autocomplete="off">
+    </div>
+    <label for="position" class="form-label">
+        {% if lang == "eng" %}
+            Choose your position:
+        {% elif lang == "ro" %}
+            Alegeți-vă poziția:
+        {% else %}
+            Wählen Sie Ihre Position:
+        {% endif %} 
+    </label>
+    <select name="position" id="position" class="form-select m-2">
+        <option value="" disabled selected>
+            {% if lang == "eng" or lang == "de" %}
+                Position
+            {% else %}
+                Poziție
+            {% endif %}
+        </option>
+        <option value="student">Student</option>
+        <option value="resident">
+            {% if lang == "eng"%}
+                Resident
+            {% elif lang == "ro" %}
+                Rezident
+            {% else %}
+                Asistenzarzt
+            {% endif %}
+        </option>
+        <option value="doctor">
+            {% if lang == "eng" %}
+                Doctor
+            {% elif lang == "ro" %}
+                Doctor
+            {% else %}
+                Arzt
+            {% endif %}
+        </option>
+    </select>
+    <div id="yearSemester" style="display: none">
+        <label for="studentYear" class="form-label">
+            {% if lang == "eng" %}
+                Choose your year:
+            {% elif lang == "ro" %}
+                Alegeți anul studiului:
+            {% else %}
+                Wählen Sie Ihr Studienjahr/Semester:
+            {% endif %} 
+        </label>
+        <select name="studentYear" id="studentYear" class="form-select m-2">
+            <option value="" disabled selected>
+                {% if lang == "eng" %}
+                    Year/Semester
+                {% elif lang == "ro" %}
+                    Anul
+                {% else %}
+                    Jahr/Semester
+                {% endif %}
+            </option>
+            <option value="1">
+                {% if lang == "eng" %}
+                    First year/ 1st or 2nd semester
+                {% elif lang == "ro" %}
+                    Anul 1
+                {% else %}
+                    1. Jahr/ 1. oder 2. Semester
+                {% endif %}
+            </option>
+            <option value="2">
+                {% if lang == "eng" %}
+                    Second year/ 3rd or 4th semester
+                {% elif lang == "ro" %}
+                    Anul 2
+                {% else %}
+                    2. Jahr/ 3. oder 4. Semester
+                {% endif %}
+            </option>
+            <option value="3">
+                {% if lang == "eng" %}
+                    Third year/ 5th or 6th semester
+                {% elif lang == "ro" %}
+                    Anul 3
+                {% else %}
+                    3. Jahr/ 5. oder 6. Semester
+                {% endif %}
+            </option>
+            <option value="4">
+                {% if lang == "eng" %}
+                    Fourth year/ 7th or 8th semester
+                {% elif lang == "ro" %}
+                    Anul 4
+                {% else %}
+                    4. Jahr/ 7. oder 8. Semester
+                {% endif %}
+            </option>
+            <option value="5">
+                {% if lang == "eng" %}
+                    Fifth year/ 9th or 10th semester
+                {% elif lang == "ro" %}
+                    Anul 5
+                {% else %}
+                    5. Jahr/ 9. oder 10. Semester
+                {% endif %}
+            </option>
+            <option value="6">
+                {% if lang == "eng" %}
+                    Sixth year/ 11th or 12th semester
+                {% elif lang == "ro" %}
+                    Anul 6
+                {% else %}
+                    PJ
+                {% endif %}
+            </option>
+            <!-- Check for how you transmit the value. If student is not selected just make the value 0 -->
+        </select>
+    </div>
+    <label for="country" class="form-label">
+        {% if lang == "eng" %}
+            Choose your country:
+        {% elif lang == "ro" %}
+            Alegeți țara:
+        {% else %}
+            Wählen Sie Ihr Land:
+        {% endif %} 
+    </label>
+    <select name="country" id="country" class="form-select m-2">
+        <option value="" disabled selected>
+            {% if lang == "eng" %}
+                Country
+            {% elif lang == "ro" %}
+                Țara
+            {% else %}
+                Land
+            {% endif %}
+        </option>
+        <option value="germany">
+            {% if lang == "eng" %}
+                Germany
+            {% elif lang == "ro" %}
+                Germania
+            {% else %}
+                Deutschland
+            {% endif %}
+        </option>
+        <option value="moldova">
+            {% if lang == "eng" or lang == "ro" %}
+                Moldova
+            {% else %}
+                Moldau
+            {% endif %}
+        </option>
+        <option value="romania">
+            {% if lang == "eng" %}
+                Romania
+            {% elif lang == "ro" %}
+                România
+            {% else %}
+                Rumänien
+            {% endif %}
+        </option>
+        <option value="switzerland">
+            {% if lang == "eng" %}
+                Switzerland
+            {% elif lang == "ro" %}
+                Elveția
+            {% else %}
+                die Schweiz
+            {% endif %}
+        </option>
+    </select>
+    <input type="hidden" name="lang" value={{ lang }}>
+    <input type="hidden" name="category" value={{ category }}>
+    <div class="row text-muted small mt-4 mb-4 mx-3 border border-primary border-5 rounded text-center p-4">
+        <!--Telling the user how the data will be used in all 3 languages-->
+        {% if lang == "eng" %}
+        Participation in this study is voluntary. All data is processed for research purposes. Their storage 
+        is ensured, as well as their confidentiality. The information will be statistically processed and will 
+        serve as the basis for certain interpretations, which will be concretized in a dissertation study, and 
+        will contribute to the dissemination of research results. The data contained in this questionnaire will 
+        be treated confidentially, in accordance with the provisions of Directive CE/95/46, ensuring the protection 
+        of individuals' integrity concerning the processing of personal data and the free movement of personal data, 
+        as well as the protection of privacy in the electronic communications sector. By pressing the 'Next' button, 
+        you agree to this.
+        {% elif lang == "ro" %}
+        Participarea la acest studiu este voluntară. Toate datele sunt prelucrate în scop de cercetare.
+         Stocarea lor este asigurată, ca de altfel şi confidenţialitatea acestora. Informațiile vor fi 
+         prelucrate statistic și constituie baza pentru anumite interpretări, care se vor concretiza într-un 
+         studiu de disertație, și vor contribui la popularizarea rezultatelor cercetării. Datele cuprinse în 
+         acest chestionar vor fi tratate confidențial, în conformitate cu prevederile Directivei CE/95/46, 
+         asigurând protecţia integrității persoanelor fizice în ceea ce priveşte prelucrarea datelor cu caracter 
+         personal şi libera circulație a datelor cu caracter personal şi protecţia vieții personale, în sectorul 
+         comunicaţiilor electronice. Apăsând butonul ”Next” sunteți de acord cu aceasta.
+        {% else %}
+        Die Teilnahme an dieser Studie ist freiwillig. Alle Daten werden zu Forschungszwecken verarbeitet. Ihre 
+        Speicherung sowie die Vertraulichkeit sind gewährleistet. Die Informationen werden statistisch verarbeitet 
+        und dienen als Grundlage für bestimmte Interpretationen, die in einer Dissertation konkretisiert werden und 
+        zur Verbreitung der Forschungsergebnisse beitragen. Die im Fragebogen enthaltenen Daten werden vertraulich 
+        behandelt, gemäß den Bestimmungen der Richtlinie CE/95/46, die den Schutz der Integrität von Personen im Hinblick 
+        auf die Verarbeitung personenbezogener Daten sowie den freien Verkehr personenbezogener Daten und den Schutz der 
+        Privatsphäre im Bereich der elektronischen Kommunikation gewährleistet. Indem Sie die Taste 'Next' drücken, 
+        stimmen Sie dem zu.
+        {% endif %}
+    </div>
+    <button type="submit" class="btn btn-primary mb-3">
+        Next
+    </button>
+</form>
+<h1 class="text-danger">
+    {{ message }}
+</h1>
+<script>
+    const userPosition = document.getElementById("position");
+    const userYearSemester = document.getElementById("yearSemester");
+
+    userPosition.addEventListener("change", function() {
+        if (userPosition.value === "student") {
+            userYearSemester.style.display = "block";
+        } else {
+            userYearSemester.style.display = "none";
+        }
+    });
+</script>
+{% endblock %}

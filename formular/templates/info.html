@@ -1,0 +1,126 @@
+{% extends 'layout.html' %}
+{% block body %}
+<div class="container">
+    <div class="row mb-2 mt-2">
+        <h1 class="text-center">
+            {% if lang == "eng" %}
+                Modified Outerbridge grading of chondromalacia
+            {% elif lang == "ro" %}
+                Clasificarea Outerbridge modificată pentru condromalacie
+            {% else %}
+                Modifizierte Outerbridge-Klassifikation der Chondromalazie 
+            {% endif %}
+        </h1>
+    </div>
+    <div class="row mb-4 mt-4 border border-danger border-5 rounded text-center text-danger fw-bold p-4">
+        {% if lang == "eng" %}
+            You can access this information anytime during the survey. There is no need to memorize it !
+        {% elif lang == "ro" %}
+            Puteți accesa această informație oricând în timpul chestionarului. Nu e nevoie să o memorați !
+        {% else %}
+            Sie können diese Informationen jederzeit während der Umfrage abrufen. Sie müssen sich das nicht merken !
+        {% endif %}
+    </div>
+    <div class="row mb-4 mt-4">
+        <div class="col-md-4">
+            {% if lang == "eng" %}
+                <h6>Grade I</h6>
+                - focal areas of hyperintensity with normal contour 
+            {% elif lang == "ro" %}
+                <h6>Grad I</h6>
+                - zone focale de hiperintensitate cu contur normal
+            {% else %}
+                <h6>Grad I</h6>
+                - fokale Bereiche mit Hyperintensität und normalem Kontur
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            <img src="static/grade1.png" class="img-fluid">
+        </div>
+        <div class="col-md-4">
+            <img src="static/examplegrade1.png" class="img-fluid">
+        </div>
+    </div>
+    <div class="row mb-4 mt-4">
+        <div class="col-md-4">
+            {% if lang == "eng" %}
+                <h6>Grade II</h6>
+                - blister-like swelling/fraying of articular cartilage extending to surface 
+            {% elif lang == "ro" %}
+                <h6>Grad II</h6>
+                - Edemațiere/desprindere asemănătoare unei vezicule a cartilajului articular, extinsă până la suprafață
+            {% else %}
+                <h6>Grad II</h6>
+                - Blasenartige Schwellung/Ausfransung des Gelenkknorpels, die bis zur Oberfläche reicht
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            <img src="static/grade2.png" class="img-fluid">
+        </div>
+        <div class="col-md-4">
+            <img src="static/examplegrade2.png" class="img-fluid">
+        </div>
+    </div>
+    <div class="row mb-4 mt-4">
+        <div class="col-md-4">
+            {% if lang == "eng" %}
+                <h6>Grade III</h6>
+                - partial-thickness cartilage loss with focal ulceration 
+            {% elif lang == "ro" %}
+                <h6>Grad III</h6>
+                - Pierderea parțială a grosimii cartilajului cu ulcerație focală
+            {% else %}
+                <h6>Grad III</h6>
+                - Teilverlust des Knorpels mit fokaler Ulzeration
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            <img src="static/grade3.png" class="img-fluid">
+        </div>
+        <div class="col-md-4">
+            <img src="static/examplegrade3.png" class="img-fluid">
+        </div>
+    </div>
+    <div class="row mb-4 mt-4">
+        <div class="col-md-4">
+            {% if lang == "eng" %}
+                <h6>Grade IV</h6>
+                - full-thickness cartilage loss with underlying bone reactive changes
+            {% elif lang == "ro" %}
+                <h6>Grad IV</h6>
+                - Pierderea completă a grosimii cartilajului cu modificări reactive ale osului subiacent
+            {% else %}
+                <h6>Grad IV</h6>
+                - Vollständiger Knorpelverlust mit reaktiven Veränderungen des darunterliegenden Knochens
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            <img src="static/grade4.png" class="img-fluid">
+        </div>
+        <div class="col-md-4">
+            <img src="static/examplegrade4.png" class="img-fluid">
+        </div>
+    </div>
+    <div class="row mb-4 mt-4">
+        {% if lang == "eng" %}
+            Source:
+        {% elif lang == "ro" %}
+            Sursă:
+        {% else %}
+            Die Quelle:
+        {% endif %}
+        <a href="https://radiopaedia.org/articles/modified-outerbridge-grading-of-chondromalacia" target="_blank">
+            Radiopedia. Modified Outerbridge grading
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="text-center">
+        <form action="/personal" method="get">
+            <button type="submit" class="btn btn-primary btn-lg m-5">Next</button>
+            <input type="hidden" name="lang" value={{ lang }}>
+        </form>
+    </div>
+</div>
+{% endblock %}
