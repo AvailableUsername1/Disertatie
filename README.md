@@ -14,4 +14,7 @@ Fișiere:
 ## Codul pentru procesarea datelor (în folderul numit ”procesare”)
 Fișiere:
  - procesare.ipynb - curăță datele primite din formular
- - 
+ - data.csv - rezultatul fișierului procesare.ipynb și inputul fișierului stat.Rmd (baza de date)
+ - stat.Rmd - aici se vor analiza statistiic datele
+
+Acest folder poate fi folosit pentru a recrea lucrarea mea de disertație.
