@@ -1,20 +1,32 @@
-# Disertatie
-Această pagină conține codul folosit pentru lucrarea mea de disertație. Ea conține 2 părți:
-1. Codul utilizat pentru formular
-2. Codul utilizat pentru procesarea datelor, obținerea de imagini și analiza statistică a lor
+## Dissertation
 
-## Codul pentru formular (în folderul numit ”formular”)
-Fișiere:
- - app.py: partea de backend
- - data.db: baza de date unde vor fi salvate răspunsurile participanților
- - static: folderul ce conține imaginile
- - templates: folderul ce conține codul pentru paginile web văzute de utilizator
- - environment.yml: fișier ce conține modulele necesare funcționării formularului. Este utilizat pentru a recrea mediul în care s-a creat formularul
+This page contains the code used in the article "AI Diagnostic Assistance Reduces Interobserver Variability in MRI Grading of Chondromalacia Patellae: A Randomized Controlled Trial with a Simulated System". It consists of two parts:
 
-## Codul pentru procesarea datelor (în folderul numit ”procesare”)
-Fișiere:
- - procesare.ipynb - curăță datele primite din formular
- - data.csv - rezultatul fișierului procesare.ipynb și inputul fișierului stat.Rmd (baza de date)
- - stat.Rmd - aici se vor analiza statistiic datele
+1. The code used for the **form**
+2. The code used for **data processing**, generating images, and their statistical analysis
 
-Acest folder poate fi folosit pentru a recrea lucrarea mea de disertație.
+---
+
+## Form Code (in the folder named "formular")
+
+**Files:**
+
+* **app.py:** The backend component.
+* **data.db:** The database where participants' responses are saved.
+* **static:** The folder containing the images.
+* **templates:** The folder containing the code for the web pages seen by the user.
+* **environment.yml:** A file containing the modules required for the form to function. It is used to recreate the environment in which the form was developed.
+
+---
+
+## Data Processing Code (in the folder named "procesare")
+
+**Files:**
+
+* **procesare.ipynb:** Cleans the data received from the form.
+* **data.csv:** The output of the `procesare.ipynb` file and the input for the `stat.Rmd` file (the database).
+* **stat.Rmd:** This is where the statistical analysis of the data is performed.
+
+This folder can be used to recreate the study.
+
+---
