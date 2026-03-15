@@ -1,5 +1,5 @@
 ---
-title: "Analiza statistică pentru lucrarea de disertație"
+title: "Statistical analisis"
 author: "Alexandru Duda"
 output:
   html_document:
@@ -16,169 +16,157 @@ output:
     toc: true
     toc_depth: '2'
 ---
-**Despre studiu**
+**About the study**
 
-Două grupe de participanți vor alege gradul condromalaciei patelare conform clasificării Outerbridge modificate pentru 10 imagini de RMN. Primul grup, în continuare grupul IA, va primi o sugestie de la inteligența artificială(IA) înainte de a alege gradul. Al doilea grup, în continuare grupul non-IA, nu va primi această sugestie. Se va studia cum recomandarea IA afectează variabilitatea interoperator.
+Two groups of participants will choose the grade of chondromalacia patellae according to the modified Outerbridge classification for 10 MRI images. The first group, hereafter the AI group, will receive a suggestion from artificial intelligence (AI) before choosing the grade. The second group, hereafter the non-AI group, will not receive this suggestion. The study will examine how the AI recommendation affects inter-observer variability.
 
 
-Se importă bibliotecele de cod extern.
+Importing libraries.
 ```{r load-packages, message=FALSE, warning=FALSE}
 library(pacman)
 p_load(rio, dplyr, irr, boot)
 ```
 
-Se importă baza de date. Calea către fișier trebuie introdusă manual și să
-corespundă sistemului de operare folosit.
+The database is being imported. The file path must be entered manually and must correspond to the system being used.
 ```{r message=FALSE, warning=FALSE}
 data <- import("C:/Users/dudaa/Documents/DataAnalisis/data.csv")
 ```
 
-O privire rapidă asupra structurii bazei de date.
+Overview of the database.
 ```{r}
 glimpse(data)
 ```
 ```{r}
 head(data)
 ```
-Baza de date are 81 de randuri si 14 coloane.
-4 coloane contin variabilele categoriale:
+The database contains 81 rows and 14 columns. Four columns contain categorical variables:
+position – the participant's occupation. This can be student, resident, or physician.
+year – applicable only to student participants. Refers to their current year of study.
+country – refers to the country where they practice.
+category – refers to the group they were assigned to. If TRUE, the participant is in the AI group; if FALSE, they are in the non-AI group.
 
-1. position - ocupatia participantului. Poate sa fie student, rezident sau medic
-2. year - valabila doar pentru participantii care sunt studenti. Se refera
-la anul in care isi fac studiul
-3. country - se refera la tara unde isi au activitatea
-4. category - se refera la grupul in care au fost distribuiti. Daca e TRUE, participantul face parte din grupul AI, iar pentru FALSE avem grupul non-AI
+The remaining 10 columns (from q1 to q10) contain the grades assigned by the participants to the images.
 
-Restul celor 10 coloane (de la q1 la q10) contin gradul atribuit de participanti imaginilor
-
-
-
-Se vor crea grafice pentru variabilele categoriale.
+Graphs will be created for the categorical variables.
 ```{r}
 barplot(table(data$position),
-        names.arg = c("Rezident", "Student"),
-        main = "Distribuția pe ocupații",
-        xlab = "Ocupația",
-        ylab = "Numărul de participanți",
+        names.arg = c("Resident", "Student"),
+        main = "Role distribution",
+        xlab = "Role",
+        ylab = "Number of participants",
         ylim = c(0,100))
 
 student_year <- table(data$year[ data$year != 0])
 barplot(student_year,
-        names.arg = c("Anul 1", "Anul 2", "Anul 3", "Anul 4", "Anul 5", "Anul 6"),
-        main = "Distribuția pe ani a studenților",
-        xlab = "Anul de studiu",
-        ylab = "Numărul de studenți",
+        names.arg = c("Year 1", "Year 2", "Year 3", "Year 4", "Year 5", "Year 6"),
+        main = "Year distribution for students",
+        xlab = "Year",
+        ylab = "Student number",
         ylim = c(0,25)
         )
 
 barplot(table(data$country),
-        names.arg = c("Germania", "R. Moldova", "România", "Elveția"),
-        main = "Distribuția pe țări a participanților",
-        xlab = "Țara efectuării activității",
-        ylab = "Numărul de participanți",
+        names.arg = c("Germany", "R. of Moldova", "Romania", "Switzerland"),
+        main = "Country distribution",
+        xlab = "Country",
+        ylab = "Number of participants",
         ylim = c(0,80)
 )
 
 barplot(table(data$category),
-        names.arg = c("non-IA", "IA"),
-        main = "Distribuția pe grupe",
-        #xlab = "Anul de studiu",
-        ylab = "Numărul de participanți",
+        names.arg = c("non-AI", "AI"),
+        main = "Group distribution",
+        #xlab = "Year of study",
+        ylab = "Number of participants",
         ylim = c(0,50)
 )
 ```
+Conclusions that can be drawn after analyzing the graphs:
+There is a relatively equal number of participants in the AI and non-AI groups.
+Only Romania is sufficiently represented as a country.
+Only the student group is sufficiently represented.
 
-Concluziile ce pot fi trase după analiza graficelor:
-
-1. Avem un număr relativ apropiat de participanți în cele 2 grupuri de IA și non-IA
-2. Doar România este reprezentată suficient ca țară
-3. Doar grupul studenților este suficient reprezentat
-
-
-Se vor crea 2 grupe separate în baza variabilei ”category” (grupul IA și non-IA). Se vor elimina coloanele corespunzătoare variabilelor categoriale. Se vor păstra doar coloanele ce conțin clasificarea imaginilor.
+Two separate groups will be created based on the 'category' variable (the AI group and the non-AI group). The columns corresponding to the categorical variables will be removed. Only the columns containing the image classifications will be retained.
 ```{r}
-# grupul IA
+# AI group
 ai_data <- data[data$category == TRUE, !names(data) %in% c("country", "year", "position", "category")]
 glimpse(ai_data)
 
-# grupul non-IA
+# Non-AI group
 non_ai_data <- data[data$category == FALSE, !names(data) %in% c("country", "year", "position", "category")]
 glimpse(non_ai_data)
 ```
-Sunt 41 de participanți în grupul IA și 37 în grupul non-IA.
+There are 41 participants in the AI group and 37 in the non-AI group.
 
-Pentru cuantificarea variabilității interoperator se va folosi Fleiss Kappa. Limbajul R are o funcție pentru calcularea acestui paramentru (kappam.fleiss). Aceasta întoarce mai multe valori pe lângă valoarea propriu-zisă, valori de care nu e nevoie. Mai jos e o funcție care selectează și întoarce doar valoarea Fleiss Kappa.
+To quantify inter-observer variability, Fleiss' Kappa will be used. The R language has a function for calculating this parameter (kappam.fleiss). This function returns several values in addition to the parameter itself, which are not needed. Below is a function that selects and returns only the Fleiss' Kappa value.
 ```{r}
 compute_kappa <- function(ratings_matrix) {
   kappa_result <- kappam.fleiss(ratings_matrix)
   return(kappa_result$value)
 }
 ```
-Funcția compute_kappa cere o matrice, astfel încât imaginile sa fie
-rânduri, iar răspunsurile participantilor să fie coloane, invers de ce există acum. E nevoie de transpoziția matricei inițiale.
+The compute_kappa function requires a matrix where the images are rows and the participants' responses are columns—the inverse of the current format. A transposition of the initial matrix is necessary.
 
-Se va calcula Fleiss Kappa pentru grupul IA.
+Fleiss' Kappa will be calculated for the AI group.
 ```{r}
 ratings_ai <- t(as.matrix(ai_data))
 kappa_ai <- compute_kappa(ratings_ai)
 kappa_ai
 ```
 
-Se va calcula Fleiss Kappa pentru grupul non-IA.
+Fleiss' Kappa will be calculated for the non-AI group.
 ```{r}
 ratings_non_ai <- t(as.matrix(non_ai_data))
 kappa_non_ai <- compute_kappa(ratings_non_ai)
 kappa_non_ai
 ```
-
-Se va calcula diferența Fleiss Kappa între cele 2 grupuri.
+The difference in Fleiss' Kappa between the two groups will be calculated
 ```{r}
 kappa_difference <- kappa_ai - kappa_non_ai
 kappa_difference
 ```
-Astfel Fleiss Kappa în grupul IA este mai mare decât în grupul non-IA. Mai departe se va încerca să se demonstreze că acest rezultat este semnificativ statistic. În acest scop se va utiliza procedeul Bootstrap, deoarece Fleiss Kappa nu are o distribuție de eșantionare cunoscută.
+Thus, Fleiss' Kappa in the AI group is higher than in the non-AI group. Moving forward, we will attempt to demonstrate that this result is statistically significant. To this end, the Bootstrap method will be used, as Fleiss' Kappa does not have a known sampling distribution.
 
+To implement the bootstrap, we will use the boot function. it requires the following arguments:
+data – the data being used
+statistic – the function used to calculate the desired parameter
+R – the number of repetitions (replicates)
 
-Pentru implementarea bootstrap vom utiliza funcția boot. Ea are nevoie de următoarele argumente:
-1. data - datele utilizate
-2. statistic - funcția utilizată pentru calcularea parametrului dorit
-3. R - numărul de repetiții
-
-Funcția folosită pentru argumentul ”statistic” al funcției boot. Ea primește ca argument datele introduse și un vector cu indici pentru formarea noului grup. Pentru acest grup se calculează un Fleiss Kappa nou.
+The function used for the 'statistic' argument of the boot function receives the input data and an index vector to form a new group. For this new group, a new Fleiss' Kappa is calculated.
 ```{r}
 boot_kappa <- function(data, indices) {
-  sampled_data <- data[indices, ] # se formează grupul nou folosind indicii
+  sampled_data <- data[indices, ] # The new group is formed using the indices.
   
-  # Se calculează Fleiss Kappa
+  # Calculating Fleiss Kappa
   kappa <- compute_kappa(t(sampled_data))
   return (kappa)
 }
 ```
 
-Implementarea bootstrap pentru grupul IA.
+Bootstrap implementation for the AI group.
 ```{r}
-# Bootstrap pentru grupul IA
+# Bootstrap For AI group
 boot_kappa1 <- boot(data = ai_data, statistic = boot_kappa, R = 20000)
-# Intervalul de încredere pentru distribuția obținută
+# Confidence interval
 boot.ci(boot_kappa1, conf = 0.99, type = c("perc"))
 ```
 
-Implementarea bootstrap pentru grupul non-IA.
+Bootstrap implementation for the non-AI group
 ```{r}
-# Bootstrap pentru grupul non-AI
+# Bootstrap for the non-AI
 boot_kappa0 <- boot(data = non_ai_data, statistic = boot_kappa, R = 20000)
-# Intervalul de incredere
+# Confidence interval
 boot.ci(boot_kappa0, conf = 0.99, type = c("perc"))
 ```
 
-Histogramele valorilor obținute din cele 2 proceduri bootstrap.
+Histograms of the values obtained from the two bootstrap procedures.
 ```{r message=FALSE, warning=FALSE}
 hist(boot_kappa1$t,
      breaks = 50,
      col = "skyblue",
-     main = "Histograma valorilor Fleiss Kappa(FK) pentru grupul IA \n și non-IA obținute prin metoda Bootstrap", 
+     main = "Histogram of Fleiss' Kappa (FK) values for the AI \n and non-AI groups obtained via the Bootstrap method", 
      xlab = "Fleiss Kappa",
-     ylab = "Frecvența valorii",
+     ylab = "Value frequency",
      ylim = c(0, 2000),
      xlim = c(0, 0.4)
      )
@@ -188,41 +176,37 @@ hist(boot_kappa0$t,
      add = TRUE,
 )
 legend("topright",
-       legend = c("FK în grupul non-IA", "FK în grupul IA"),
+       legend = c("FK in the non-AI group", "FK in the AI group"),
        fill = c("orange", "skyblue")
 )
 ```
+Visually, it can be observed that their intersection is minimal.
 
- 
-Vizual se poate observa că intersecția lor este minimă
-
-
-Histograma diferențelor valorilor din cele 2 grupuri
+Histogram of the differences between the values of the two groups
 ```{r message=FALSE, warning=FALSE}
 hist(boot_kappa1$t - boot_kappa0$t,
      breaks = 50,
      col = "forestgreen",
-     main = "Histograma diferențelor Fleiss Kappa \n între cele 2 grupuri",
-     xlab = "Fleiss Kappa IA  - Fleiss Kappa non-IA",
-     ylab = "Frecvența valorii",
+     main = "Histogram of Fleiss' Kappa differences \n between the two groups",
+     xlab = "Fleiss Kappa AI  - Fleiss Kappa non-AI",
+     ylab = "Value frequency",
      Xlim = c(0, 0.4),
      ylim = c(0,1500)
      )
 ```
 
-Se va calcula intervalul de încredere 99% pentru această distribuție (one tailed test, adică se vor lua în considerare valorile cuprinse între percentila 1 și 100). Ipoteza alternativă va presupune că intervenția IA crește Fleiss Kappa/ scade variabilitatea interoperator.
+The 99% confidence interval for this distribution will be calculated (one-tailed test; values between the 1st and 100th percentiles will be considered). The alternative hypothesis assumes that the AI intervention increases Fleiss' Kappa / decreases inter-observer variability.
 
-k1 = Fleiss Kappa în grupul IA
+k1 = Fleiss Kappa in the AI group
 
 
-k0 = Fleiss Kappa în grupul non-IA
+k0 = Fleiss Kappa in the non-AI group
 
-Ipoteza nulă: matematic, k1 - k0 <= 0. În cuvinte, Fleiss Kappa în grupul IA este mai mic sau egal cu cel din grupul non-IA.
+Null hypothesis: mathematically, k1 - k0 <= 0. In words, Fleiss' Kappa in the AI group is less than or equal to that in the non-AI group.
 
-Ipoteza alternativă: matematic k1 - k0 > 0. În cuvinte, Fleiss Kappa în grupul IA este mai mare decât în grupul non-IA.
+Alternative hypothesis: mathematically, k1 - k0 > 0. In words, Fleiss' Kappa in the AI group is greater than in the non-AI group.
 ```{r}
 quantile(boot_kappa1$t - boot_kappa0$t, probs = c(0.01, 1))
 ```
 
-Intervalul de încredere de 99% one-tailed nu îl conține pe 0. 
-**În concluzie se poate respinge ipoteza nulă.**
+The 99% one-tailed confidence interval does not contain 0. In conclusion, the null hypothesis can be rejected.
