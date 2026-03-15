@@ -6,7 +6,7 @@ import sqlite3
 
 app = Flask(__name__)
 
-# SQL() ia ca argument drumul catre localizarea bazei de date in sistemul de operare. Trebuie indicat de utilizator
+# The SQL() function takes the file path to the database's location in the operating system as an argument. This must be specified by the user.
 db = SQL('sqlite:///data.db')
 
 class Period:
@@ -39,7 +39,7 @@ YEARS = ["1", "2", "3", "4", "5", "6"]
 # Eventually it will be added into a database
 user_data = {}
 
-# Pagina initiala
+# Initial page
 @app.route('/', methods=['get', 'post'])
 def index():
     if request.method == 'GET':
@@ -47,12 +47,12 @@ def index():
     else:
         return render_template('index.html', lang=request.form.get('lang'))
 
-# Pagina cu informatii despre clasificare
+# Information page about classification
 @app.route('/info')
 def info():
     return render_template('info.html', lang = request.args.get('lang'))
 
-# Pagina cu informatii personale
+# Personal information page
 @app.route('/personal', methods=['get','post'])
 def personal():
     if request.method == 'GET':
@@ -103,7 +103,7 @@ def personal():
         # Redirect user to questions form
         return redirect(url_for('form', lang = request.form.get('lang'), category = request.form.get('category')))
 
-# Pagina pentru imagini
+# Image page
 @app.route('/form', methods=['post','get'])
 def form():
     # Page represented right at the beginning
@@ -168,7 +168,7 @@ def form():
             user_data['q' + request.form.get('question')] = request.form.get('q' + request.form.get('question'))
             return render_template('form.html', number = int(request.form.get('question')) + 1, category = AI_group, lang = request.form.get('lang'), aiWait = aiWait)
 
-# Pagina cu multumirea pentru participant
+# Thank you page
 @app.route('/goodbye', methods=['get'])
 def goodbye():
     # Usage example
